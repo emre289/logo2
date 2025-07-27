@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digor Capital Logo Seçimi</title>
+    <title>Logo Seçim Aracı</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -121,6 +121,15 @@
             margin-top: 0;
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
+        }
+        .gallery-title.clickable {
+            cursor: pointer;
+            color: #0056b3;
+            transition: color 0.2s;
+        }
+        .gallery-title.clickable:hover {
+            color: #003d80;
+            text-decoration: underline;
         }
         .gallery-content {
             display: flex;
@@ -243,10 +252,21 @@
 <body>
     <div class="main-container">
         <div class="header">
-            <h1>Digor Capital Logo Seçimi</h1>
+            <h1>Logo Seçim Aracı</h1>
             <button id="reset-btn" title="Tüm beğenileri ve seçimleri temizleyip en başa dönmek için tıklayın.">Değerlendirmeyi Sıfırla</button>
         </div>
-        <div id="image-viewer"></div>
+        <div id="image-viewer">
+             <div id="current-image-container">
+                <img id="current-image" src="" alt="Logo">
+            </div>
+            <div id="controls">
+                <button id="dislike-btn" class="btn">Beğenmedim</button>
+                <button id="like-btn" class="btn">Beğendim</button>
+            </div>
+            <div id="completion-message" style="display: none;">
+                Tüm logoları değerlendirdiniz! Seçimlerinizi aşağıdan inceleyebilirsiniz.
+            </div>
+        </div>
         <div class="galleries">
             <div id="liked-gallery" class="gallery">
                 <h2 id="liked-title" class="gallery-title clickable" title="Tüm beğenilenleri büyük görmek için tıklayın">✅ Beğenilenler</h2>
@@ -330,7 +350,14 @@
 
         likeBtn.addEventListener('click', () => handleSelection(true));
         dislikeBtn.addEventListener('click', () => handleSelection(false));
-        resetBtn.addEventListener('click', () => { if (confirm('Emin misiniz? Tüm seçimler silinecek.')) { localStorage.clear(); location.reload(); } });
+        resetBtn.addEventListener('click', () => { 
+            if (confirm('Emin misiniz? Tüm seçimler silinecek.')) {
+                localStorage.removeItem('logo_likedImages');
+                localStorage.removeItem('logo_dislikedImages');
+                localStorage.removeItem('logo_currentIndex');
+                location.reload();
+            }
+        });
         likedTitle.addEventListener('click', () => { populateListModal(); listModal.style.display = 'flex'; });
         listModalCloseBtn.addEventListener('click', () => listModal.style.display = 'none');
         lightboxCloseBtn.addEventListener('click', () => lightboxModal.style.display = 'none');
