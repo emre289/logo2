@@ -84,14 +84,8 @@
         #like-btn {
             background-color: #28a745;
         }
-        #like-btn:hover {
-            background-color: #218838;
-        }
         #dislike-btn {
             background-color: #dc3545;
-        }
-        #dislike-btn:hover {
-            background-color: #c82333;
         }
         #completion-message {
             font-size: 1.5em;
@@ -122,21 +116,12 @@
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
         }
-        .gallery-title.clickable {
-            cursor: pointer;
-            color: #0056b3;
-            transition: color 0.2s;
-        }
-        .gallery-title.clickable:hover {
-            color: #003d80;
-            text-decoration: underline;
-        }
         .gallery-content {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             padding-top: 10px;
-            min-height: 110px; /* Galerilerin boşken çökmemesi için */
+            min-height: 110px;
         }
         .gallery-item {
             position: relative;
@@ -144,38 +129,23 @@
             height: 100px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: #f9f9f9;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .gallery-item:hover {
+            transform: scale(1.05);
         }
         .gallery-item img {
             max-width: 90%;
             max-height: 90%;
             object-fit: contain;
-            cursor: zoom-in;
         }
-        .move-btn {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            color: white;
-            border: none;
-            padding: 4px 0;
-            font-size: 12px;
-            cursor: pointer;
-            transform: translateY(100%);
-            transition: transform 0.2s ease;
-        }
-        .gallery-item:hover .move-btn {
-            transform: translateY(0);
-        }
-        .move-to-disliked { background-color: rgba(220, 53, 69, 0.8); }
-        .move-to-liked { background-color: rgba(40, 167, 69, 0.8); }
 
-        /* Modal ve Lightbox için Genel Stiller */
+        /* Lightbox Modalı Stilleri */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -184,11 +154,10 @@
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.8);
+            background-color: rgba(0,0,0,0.85);
             align-items: center;
             justify-content: center;
-            padding: 10px;
+            flex-direction: column;
         }
         .modal-close {
             color: #fff;
@@ -202,150 +171,96 @@
         }
         .modal-close:hover,
         .modal-close:focus { color: #bbb; }
-        
-        /* Liste Görüntüleme Modalı */
-        .list-modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 1200px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
-        #modal-gallery-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            padding-top: 20px;
-            justify-content: center;
-        }
-        .modal-item {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f9f9f9;
-        }
-        .modal-item img {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-        }
-
-        /* Resim Büyütme Lightbox */
         #lightbox-image {
-            max-width: 95%;
-            max-height: 85vh;
+            max-width: 90%;
+            max-height: 75vh;
             margin: auto;
         }
-
+        #lightbox-actions {
+            width: 100%;
+            text-align: center;
+            padding-top: 20px;
+        }
+        .lightbox-move-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 28px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="main-container">
-        <div class="header">
-            <h1>Logo Seçim Aracı</h1>
-            <button id="reset-btn" title="Tüm beğenileri ve seçimleri temizleyip en başa dönmek için tıklayın.">Değerlendirmeyi Sıfırla</button>
-        </div>
+        <div class="header"><h1>Logo Seçim Aracı</h1><button id="reset-btn">Değerlendirmeyi Sıfırla</button></div>
         <div id="image-viewer">
-             <div id="current-image-container">
-                <img id="current-image" src="" alt="Logo">
-            </div>
-            <div id="controls">
-                <button id="dislike-btn" class="btn">Beğenmedim</button>
-                <button id="like-btn" class="btn">Beğendim</button>
-            </div>
-            <div id="completion-message" style="display: none;">
-                Tüm logoları değerlendirdiniz! Seçimlerinizi aşağıdan inceleyebilirsiniz.
-            </div>
+             <div id="current-image-container"><img id="current-image" src=""></div>
+             <div id="controls"><button id="dislike-btn" class="btn">Beğenmedim</button><button id="like-btn" class="btn">Beğendim</button></div>
+             <div id="completion-message" style="display: none;">Tüm logoları değerlendirdiniz!</div>
         </div>
         <div class="galleries">
-            <div id="liked-gallery" class="gallery">
-                <h2 id="liked-title" class="gallery-title clickable" title="Tüm beğenilenleri büyük görmek için tıklayın">✅ Beğenilenler</h2>
-                <div id="liked-content" class="gallery-content"></div>
-            </div>
-            <div id="disliked-gallery" class="gallery">
-                <h2 class="gallery-title">❌ Beğenilmeyenler</h2>
-                <div id="disliked-content" class="gallery-content"></div>
-            </div>
+            <div class="gallery"><h2 class="gallery-title">✅ Beğenilenler</h2><div id="liked-content" class="gallery-content"></div></div>
+            <div class="gallery"><h2 class="gallery-title">❌ Beğenilmeyenler</h2><div id="disliked-content" class="gallery-content"></div></div>
         </div>
     </div>
     
-    <div id="list-modal" class="modal-overlay"><div class="list-modal-content"><span id="list-modal-close-btn" class="modal-close">&times;</span><h2>Tüm Beğenilen Logolar</h2><div id="modal-gallery-content"></div></div></div>
-    <div id="lightbox-modal" class="modal-overlay"><span id="lightbox-close-btn" class="modal-close">&times;</span><img id="lightbox-image" alt="Büyük Logo Görünümü"></div>
-
+    <div id="lightbox-modal" class="modal-overlay">
+        <span id="lightbox-close-btn" class="modal-close">&times;</span>
+        <img id="lightbox-image" alt="Büyük Logo Görünümü">
+        <div id="lightbox-actions"></div>
+    </div>
 
     <script>
         const imageUrls = [
             "https://i.ibb.co/rKdNt5GF/a-logo-design-featuring-digor-capital-pr-GP0-Pw-Gph-Tf-W0h-Jd-IWdc-VPg-pgh-Bnal-QOSK-Jk5-Tjvb-ZQ.jpg", "https://i.ibb.co/WNZqZ775/a-logo-design-featuring-the-initials-dc-KBk-Mn-QBTQyau2-Iz7o-Ko50w-By-ZJFA3k-Rqm9-Fwb58sise-Q.jpg", "https://i.ibb.co/dJX1YH0Z/a-logo-design-featuring-the-stylized-ini-JCR2gzk-FQ7eu-Rl-Hb-RYm49-Q-0-PJct-QFST4-S2-UG-jqv-OF2w.jpg", "https://i.ibb.co/Y4PBRpGf/a-logo-design-featuring-the-text-digor-c-Av4o-Tw-Hu-TI6-Smngnmf-RECQ-pgh-Bnal-QOSK-Jk5-Tjvb-ZQ.jpg", "https://i.ibb.co/ZRGJpFV0/a-logo-design-for-digor-capital-an-inves-Jppt1a-P0-T3m-IPZGf-QW0-S7-A-0-PJct-QFST4-S2-UG-jqv-OF2w.jpg", "https://i.ibb.co/Hp9TqBv3/a-modern-logo-design-for-digor-capital-f-d66j-PAVLR02-UMP48sf-Vnmg-0-PJct-QFST4-S2-UG-jqv-OF2w.jpg", "https://i.ibb.co/jv4Wc14h/a-modern-logo-design-for-digor-capital-f-qx8-Lp-Qi-ESke-Xrtf-Jg-XCLk-A-By-ZJFA3k-Rqm9-Fwb58sise-Q.jpg", "https://i.ibb.co/8nw8JrZR/a-modern-minimalist-logo-design-for-digo-usartk-Xa-Teez-In-Ik5-Rd-DJw-By-ZJFA3k-Rqm9-Fwb58sise-Q.jpg", "https://i.ibb.co/kVvQfFdt/a-logo-design-featuring-the-text-digor-c-Hf-Usu-Uwx-Sya-Bvhb-LC94-RJw-vk-Tyu-Drm-TUOw-Zjrgg-Cj-UCQ.jpg", "https://i.ibb.co/Q3mBDM1K/a-logo-design-featuring-the-text-digor-c-LH5-Q2-LWARPO7-Yz0u-Akpc0-A-Dt-Fh-T1e-Qi-Kr-O1q-Kqh-Wrzg.jpg", "https://i.ibb.co/jvWYX8zH/a-logo-design-featuring-the-text-digor-c-YMq1-Fyl-ESKa-NCw-Bc8p-JWQ-z-AQnu-Ohu-Tg-SZSVJBRsamgw.jpg", "https://i.ibb.co/9mTjZ5kK/a-logo-design-for-digor-capital-showcase-i2-Sb30z-Rki-Ic-Vy4-Jl-SPGA-Plwix-Rra-TTWtgc-VVNk7-PSQ.jpg", "https://i.ibb.co/b5QBRt4s/a-minimalist-logo-design-featuring-the-t-el-iu-Ppy-QXWYNdm-ERZR6-YA-z-AQnu-Ohu-Tg-SZSVJBRsamgw.jpg", "https://i.ibb.co/6cRtWPKx/a-minimalist-logo-design-featuring-the-t-z8-Dlm-Cdl-QKasl-Gt7u-NCu2-Q-w-Orn6-I2-WSnq-El1-FVMzx-Wu-Q.jpg", "https://i.ibb.co/MDhxDrLx/design-a-minimalist-and-elegant-logo-for-YJf-C0ov-LRMu-ja-MD8g-XLw-vk-Tyu-Drm-TUOw-Zjrgg-Cj-UCQ.jpg", "https://i.ibb.co/S7RJNyx9/design-a-minimalist-and-emotionally-powe-la6-Rdfsd-TCSi0cn6-EI1-Eg-Dt-Fh-T1e-Qi-Kr-O1q-Kqh-Wrzg.jpg", "https://i.ibb.co/p8gDrH1/design-a-minimalist-and-emotionally-powe-Wxf-Ob-Vg0-Qa-Xmiz-Pp-EFmeg-Dt-Fh-T1e-Qi-Kr-O1q-Kqh-Wrzg.jpg", "https://i.ibb.co/MxyPGqPr/design-a-sleek-minimalist-logo-for-digor-S1ii85-K2-Si67-JHe9qtblpw-qb-PYosej-Qgy3710-Iu-Nr-Xs-A.jpg", "https://i.ibb.co/QvTY14wX/a-logo-design-featuring-digor-capital-pr-i04-Bgm-WARP6-Ltsdpko-Tf-Jg-Plwix-Rra-TTWtgc-VVNk7-PSQ.jpg", "https://i.ibb.co/SDVt9QDK/a-logo-design-featuring-the-text-digor-c-kg-AOhn-RTRRGipvs-VCg-M-HQ-Mbd9wuug-Q8mqxd4-Znkt-GKA.jpg", "https://i.ibb.co/GQgZzCNW/a-logo-design-featuring-the-text-digor-c-NDxta5n-TTy-B1sg0p5-PE-w-6-KIF5-Ce-TXm0-BT8ts3t-YOg.jpg", "https://i.ibb.co/HfVcWqq7/a-logo-design-featuring-two-symmetrical-Hj7j-IEBJRR6zr-Gg-Tm-Ho-VFA-y-TQPVOWBSDSf-GIPKVm-Wqx-Q.jpg", "https://i.ibb.co/jPYnQZWm/a-logo-design-showcasing-the-text-digor-U0kd-W3-Rm-Ta-Ci-Jjiqwc-Rn-UA-0gva3f-E-Qj2wf-Ct-Q6o1u4w.jpg", "https://i.ibb.co/6Kbg8zZ/a-minimalist-emblem-design-for-digor-cap-VTb9-Fj-FXS4yd-Gi-Uw0-Xh-Wtw-a-n-L7x-Mv-Sz-GI5-PGdk-Aci-Uw.jpg", "https://i.ibb.co/Kzmr0tGC/a-minimalist-logo-design-featuring-digor-b-Gw5-D-4-Sdq-GLAw5pv-UJOw-sqp-P4-Qxm-S2ed-GQPkh-BLguw.jpg", "https://i.ibb.co/LXFhMKQX/a-minimalist-logo-design-featuring-digor-t-F7gmo0-TQJy-QUF8np-JON8-Q-D0y-Zyxo-SSS6p-WOCdy-WQv5-A.jpg", "https://i.ibb.co/yc89pqn9/a-minimalist-logo-design-featuring-the-i-a-Mhb-Xj-TRQx23-A7rl095fng-6z6-WY1-D3-Rc-Wv-h-Rl-ZG9-Bx-Q.jpg", "https://i.ibb.co/xKJWKX1d/a-minimalist-logo-design-featuring-the-i-R2-F0c-Wu-GQkuhu-Sbsy-LYe-LQ-Cnt-Lk-Xw-CQTC7tce9-JCKb-Q.jpg", "https://i.ibb.co/Rpp6m0hT/a-minimalist-logo-design-featuring-the-i-vu-Pttm-LTQo-S0csn-ZQh-Gvg-A-9-DQi-d-Dw-TZ-Uq-E-Ecb-RI3-A.jpg", "https://i.ibb.co/nqqP3pXV/a-minimalist-logo-design-featuring-the-t-55-WJ9-WY-Sz-SC7-Lu-Xh-HXMKQ-F3smch04-QTig-Pl-Tp-b-Xg.jpg", "https://i.ibb.co/KcBxmW36/a-minimalist-logo-design-featuring-two-s-e2uw2i-Z7-T4m-O-a6-Co-O1d8-A-y-TQPVOWBSDSf-GIPKVm-Wqx-Q.jpg", "https://i.ibb.co/Q7DwxLf3/a-modern-and-minimalist-logo-design-for-JGt-NGz-Qv-SP-hd-Zkqm9h-QXQ-pgh-Bnal-QOSK-Jk5-Tjvb-ZQ.jpg", "https://i.ibb.co/d0bkyRHJ/a-sophisticated-logo-design-featuring-th-u-Fycwjj-UTaqv-I736-S8-Fk-NA-Frsn2-Zxf-TICr-HKu-E4-LLgw.jpg", "https://i.ibb.co/TBFBvjyT/a-sophisticated-typographic-logo-in-a-mi-gnl6-Uc-AQq-Ki-K1-Gp-Uni-CGg-la-ES6z5-XT3-Ofchep2-Fw-CXw.jpg", "https://i.ibb.co/1JTNQ4H4/a-vector-logo-design-featuring-a-sleek-a-Beg6v2-Qe-Qn-X3f-Wr-EQg1-Gg-M5-Uu-Kvrn-RPOp-O9-FEX4g-VSg.jpg", "https://i.ibb.co/C5BZk5Zm/D.png", "https://i.ibb.co/YTtmpxMS/design-a-minimalist-and-elegant-logo-for-mcz7a-JERN6hhird-PYrmpw-D0y-Zyxo-SSS6p-WOCdy-WQv5-A.jpg", "https://i.ibb.co/BVpgq4Hn/design-a-minimalist-and-elegant-typograp-k1ijcoys-Suaohty-Wn-Nl6-Kg-ctrpiug-ISp2-CRk-GSSrf-Z6g.jpg", "https://i.ibb.co/LXPZxwL1/design-a-minimalist-and-elegant-typograp-n-OPp-YHH6-RYybwcj-AMIYUh-Q-ctrpiug-ISp2-CRk-GSSrf-Z6g.jpg", "https://i.ibb.co/LFSmgsk/design-a-minimalist-and-emotionally-powe-Tlrgp-Rfu-RZCl-Sl-FFu4ly-Tw-F3smch04-QTig-Pl-Tp-b-Xg.jpg", "https://i.ibb.co/rfkrDKQY/design-a-minimalist-and-powerful-logo-fo-ROri7-Bt2-Qf-O6-Nnq-Ric-Bywg-M5-Uu-Kvrn-RPOp-O9-FEX4g-VSg.jpg", "https://i.ibb.co/MDPq8f6Y/design-a-minimalist-and-premium-logo-for-G-0t8-CTDQty-TGy-DDILLp-UQ-6z6-WY1-D3-Rc-Wv-h-Rl-ZG9-Bx-Q.jpg", "https://i.ibb.co/WvL6hjkJ/design-a-minimalist-and-premium-logo-for-Ld-WCpfx-SQDe1-Fr-Eu-DFqx-RA-9-DQi-d-Dw-TZ-Uq-E-Ecb-RI3-A.jpg", "https://i.ibb.co/1G7dwXph/design-a-minimalist-and-premium-logo-for-TFq-Pv-EQQZe5-Zfaqa1y-Drw-6z6-WY1-D3-Rc-Wv-h-Rl-ZG9-Bx-Q.jpg", "https://i.ibb.co/3YRmMSQk/design-a-minimalist-and-symbolic-logo-fo-4w0hn-HJk-R1q-QKPhpzhe40-A-y-TQPVOWBSDSf-GIPKVm-Wqx-Q.jpg", "https://i.ibb.co/h1T5C7NG/design-a-minimalist-and-symbolic-logo-fo-KJrqg-A7l-QVevdw-E2-Zq-D-Ng-y-TQPVOWBSDSf-GIPKVm-Wqx-Q.jpg", "https://i.ibb.co/5hqpcS6L/design-a-minimalist-typographic-logo-for-GAX8-Ifey-Sd6-Eap-Fx7-DCWNg-6-KIF5-Ce-TXm0-BT8ts3t-YOg.jpg"
         ];
         let currentIndex = 0, likedImages = [], dislikedImages = [];
-        const [currentImageElem, likeBtn, dislikeBtn, resetBtn, imageViewer, completionMessage, likedTitle, listModal, listModalCloseBtn, lightboxModal, lightboxImage, lightboxCloseBtn, likedContent, dislikedContent] = [
-            "current-image", "like-btn", "dislike-btn", "reset-btn", "image-viewer", "completion-message", "liked-title", "list-modal", "list-modal-close-btn", "lightbox-modal", "lightbox-image", "lightbox-close-btn", "liked-content", "disliked-content"
+        const [currentImageElem, likeBtn, dislikeBtn, resetBtn, imageViewer, completionMessage, lightboxModal, lightboxImage, lightboxCloseBtn, likedContent, dislikedContent, lightboxActions] = [
+            "current-image", "like-btn", "dislike-btn", "reset-btn", "image-viewer", "completion-message", "lightbox-modal", "lightbox-image", "lightbox-close-btn", "liked-content", "disliked-content", "lightbox-actions"
         ].map(id => document.getElementById(id));
 
         const saveData = () => { localStorage.setItem('logo_likedImages', JSON.stringify(likedImages)); localStorage.setItem('logo_dislikedImages', JSON.stringify(dislikedImages)); localStorage.setItem('logo_currentIndex', currentIndex); };
         const loadData = () => { const savedIndex = localStorage.getItem('logo_currentIndex'); if (savedIndex !== null) { likedImages = JSON.parse(localStorage.getItem('logo_likedImages') || '[]'); dislikedImages = JSON.parse(localStorage.getItem('logo_dislikedImages') || '[]'); currentIndex = parseInt(savedIndex, 10); } };
         const showImage = (index) => { if (index < imageUrls.length) { currentImageElem.src = imageUrls[index]; imageViewer.style.display = 'block'; completionMessage.style.display = 'none'; } else { imageViewer.style.display = 'none'; completionMessage.style.display = 'block'; } };
         
-        function createGalleryItem(url, type) {
-            const item = document.createElement('div');
-            item.className = 'gallery-item';
-            const img = document.createElement('img');
-            img.src = url;
-            img.alt = `${type === 'liked' ? 'Beğenilen' : 'Beğenilmeyen'} Logo`;
-            item.appendChild(img);
-            
-            const moveBtn = document.createElement('button');
-            moveBtn.className = 'move-btn';
-            if (type === 'liked') {
-                moveBtn.textContent = 'Beğenilmeyenlere Taşı';
-                moveBtn.classList.add('move-to-disliked');
-                moveBtn.onclick = (e) => { e.stopPropagation(); moveFromLikedToDisliked(url); };
-            } else {
-                moveBtn.textContent = 'Beğenilenlere Taşı';
-                moveBtn.classList.add('move-to-liked');
-                moveBtn.onclick = (e) => { e.stopPropagation(); moveFromDislikedToLiked(url); };
-            }
-            item.appendChild(moveBtn);
-            return item;
-        }
-
         const updateGalleries = () => {
             likedContent.innerHTML = '';
             dislikedContent.innerHTML = '';
-            likedImages.forEach(url => likedContent.appendChild(createGalleryItem(url, 'liked')));
-            dislikedImages.forEach(url => dislikedContent.appendChild(createGalleryItem(url, 'disliked')));
-        };
-
-        const populateListModal = () => {
-            const modalContent = document.getElementById('modal-gallery-content');
-            modalContent.innerHTML = '';
-            if (likedImages.length === 0) { modalContent.innerHTML = '<p>Henüz beğenilen logo yok.</p>'; return; }
-            likedImages.forEach(url => {
+            const createGalleryItem = (url) => {
                 const item = document.createElement('div');
-                item.className = 'modal-item';
-                const moveBtn = document.createElement('button');
-                moveBtn.className = 'move-btn move-to-disliked';
-                moveBtn.textContent = 'Beğenilmeyenlere Taşı';
-                moveBtn.onclick = (e) => { e.stopPropagation(); moveFromLikedToDisliked(url); };
-                item.innerHTML = `<img src="${url}" alt="Beğenilen Logo">`;
-                item.appendChild(moveBtn);
-                modalContent.appendChild(item);
-            });
+                item.className = 'gallery-item';
+                item.innerHTML = `<img src="${url}" alt="Logo">`;
+                return item;
+            };
+            likedImages.forEach(url => likedContent.appendChild(createGalleryItem(url)));
+            dislikedImages.forEach(url => dislikedContent.appendChild(createGalleryItem(url)));
         };
 
-        const openLightbox = (src) => { lightboxImage.src = src; lightboxModal.style.display = 'flex'; };
+        const openLightbox = (src, type) => {
+            lightboxImage.src = src;
+            lightboxActions.innerHTML = ''; // Önceki butonu temizle
+            
+            const moveBtn = document.createElement('button');
+            moveBtn.className = 'lightbox-move-btn';
+            
+            if (type === 'liked') {
+                moveBtn.textContent = 'Beğenilmeyenlere Taşı';
+                moveBtn.style.backgroundColor = '#dc3545';
+                moveBtn.onclick = () => { moveFromLikedToDisliked(src); closeLightbox(); };
+            } else {
+                moveBtn.textContent = 'Beğenilenlere Taşı';
+                moveBtn.style.backgroundColor = '#28a745';
+                moveBtn.onclick = () => { moveFromDislikedToLiked(src); closeLightbox(); };
+            }
+            lightboxActions.appendChild(moveBtn);
+            lightboxModal.style.display = 'flex';
+        };
+
+        const closeLightbox = () => { lightboxModal.style.display = 'none'; };
         const moveFromDislikedToLiked = (url) => { dislikedImages = dislikedImages.filter(u => u !== url); likedImages.push(url); updateGalleries(); saveData(); };
-        const moveFromLikedToDisliked = (url) => { likedImages = likedImages.filter(u => u !== url); dislikedImages.push(url); updateGalleries(); populateListModal(); saveData(); if (likedImages.length === 0) listModal.style.display = 'none'; };
+        const moveFromLikedToDisliked = (url) => { likedImages = likedImages.filter(u => u !== url); dislikedImages.push(url); updateGalleries(); saveData(); };
         const handleSelection = (isLike) => { if (currentIndex < imageUrls.length) { const url = imageUrls[currentIndex]; if (isLike) likedImages.push(url); else dislikedImages.push(url); currentIndex++; showImage(currentIndex); updateGalleries(); saveData(); } };
 
         likeBtn.addEventListener('click', () => handleSelection(true));
@@ -358,12 +273,11 @@
                 location.reload();
             }
         });
-        likedTitle.addEventListener('click', () => { populateListModal(); listModal.style.display = 'flex'; });
-        listModalCloseBtn.addEventListener('click', () => listModal.style.display = 'none');
-        lightboxCloseBtn.addEventListener('click', () => lightboxModal.style.display = 'none');
-        window.addEventListener('click', (e) => { if (e.target === listModal) listModal.style.display = 'none'; if (e.target === lightboxModal) lightboxModal.style.display = 'none'; });
-        likedContent.addEventListener('click', (e) => { if (e.target.tagName === 'IMG') openLightbox(e.target.src); });
-        dislikedContent.addEventListener('click', (e) => { if (e.target.tagName === 'IMG') openLightbox(e.target.src); });
+        
+        lightboxCloseBtn.addEventListener('click', closeLightbox);
+        window.addEventListener('click', (e) => { if (e.target === lightboxModal) closeLightbox(); });
+        likedContent.addEventListener('click', (e) => { if (e.target.parentElement.classList.contains('gallery-item')) openLightbox(e.target.src, 'liked'); });
+        dislikedContent.addEventListener('click', (e) => { if (e.target.parentElement.classList.contains('gallery-item')) openLightbox(e.target.src, 'disliked'); });
 
         loadData();
         showImage(currentIndex);
